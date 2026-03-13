@@ -1,0 +1,10 @@
+
+{
+  "expo": {
+    "name": "Closet Virtual App",
+    "slug": "closet-virtual-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": ["android","ios","web"]
+  }
+}
