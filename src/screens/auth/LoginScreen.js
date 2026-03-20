@@ -5,6 +5,8 @@ import AppTextInput from '../../components/AppTextInput';
 import PrimaryButton from '../../components/PrimaryButton';
 import { COLORS } from '../../constants/theme';
 
+import { auth } from '../../services/firebaseConfig';
+
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

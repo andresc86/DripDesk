@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import { COLORS } from '../constants/theme';
 
+import { auth, db } from '../services/firebaseConfig';
+
 const items = [
   'Estilo favorito: Casual elegante',
   'Colores preferidos: Blanco, negro y rosa',
@@ -17,8 +19,8 @@ export default function ProfileScreen() {
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>C</Text>
         </View>
-        <Text style={styles.name}>Camilo Giraldo</Text>
-        <Text style={styles.mail}>camilo@email.com</Text>
+        <Text style={styles.name}>Usuario</Text>
+        <Text style={styles.mail}></Text>
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Preferencias</Text>

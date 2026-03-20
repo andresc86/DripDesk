@@ -4,6 +4,7 @@ import ScreenContainer from '../../components/ScreenContainer';
 import AppTextInput from '../../components/AppTextInput';
 import PrimaryButton from '../../components/PrimaryButton';
 import { COLORS } from '../../constants/theme';
+import { auth } from '../../services/firebaseConfig';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');

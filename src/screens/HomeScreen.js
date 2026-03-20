@@ -6,6 +6,8 @@ import GarmentCard from '../components/GarmentCard';
 import { COLORS } from '../constants/theme';
 import { GARMENTS } from '../data/mockData';
 
+import { auth, db } from '../services/firebaseConfig';
+
 export default function HomeScreen({ navigation }) {
   return (
     <ScreenContainer>
@@ -19,7 +21,7 @@ export default function HomeScreen({ navigation }) {
         ListHeaderComponent={
           <>
             <View style={styles.header}>
-              <Text style={styles.greeting}>Hola, Camilo 👋</Text>
+              <Text style={styles.greeting}>Hola 👋</Text>
               <Text style={styles.subtitle}>¿Qué quieres vestir hoy?</Text>
             </View>
 
