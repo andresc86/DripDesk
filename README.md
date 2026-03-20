@@ -21,7 +21,8 @@ Facilitar la organización de prendas y la creación de combinaciones de outfits
 - Perfil de usuario
 
 ## Estado del proyecto
-En desarrollo
+En desarrollo 
+(Se irán agregando nuevas funcionalidades como recomendaciones automáticas de outfits y mejoras en la experiencia de usuario).
 
 ## Autor
 Andrés Cifuentes Guerra
