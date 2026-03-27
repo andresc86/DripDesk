@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../services/firebaseConfig';
 
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -66,14 +68,42 @@ function MainTabs() {
 }
 
 export default function AppNavigator() {
+  const [user, setUser] = useState(undefined);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser || null);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  if (user === undefined) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Splash" component={SplashScreen} />
+      </Stack.Navigator>
+    );
+  }
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Splash" component={SplashScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="MainTabs" component={MainTabs} />
-      <Stack.Screen name="AddGarment" component={AddGarmentScreen} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="CreateOutfit" component={CreateOutfitScreen} />
+      {user ? (
+        <>
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen
+            name="AddGarment"
+            component={AddGarmentScreen}
+            options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen name="CreateOutfit" component={CreateOutfitScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

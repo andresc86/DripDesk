@@ -1,26 +1,73 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import { COLORS } from '../constants/theme';
-
-import { auth, db } from '../services/firebaseConfig';
+import { auth } from '../services/firebaseConfig';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 
 const items = [
   'Estilo favorito: Casual elegante',
   'Colores preferidos: Blanco, negro y rosa',
   'Temporada: Todo el año',
-  'Sincronización con Firebase: pendiente',
+  'Sincronización con Firebase: activa',
 ];
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
+  const [userName, setUserName] = useState('Usuario');
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserName(user.displayName || 'Usuario');
+        setUserEmail(user.email || '');
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Cerrar sesión',
+      '¿Estás seguro de que deseas salir?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Salir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await signOut(auth);
+              navigation.replace('Login');
+            } catch (error) {
+              console.log('LOGOUT ERROR:', error);
+              Alert.alert('Error', 'No se pudo cerrar sesión');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const initial = userName?.trim()?.charAt(0)?.toUpperCase() || 'U';
+
   return (
     <ScreenContainer>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>C</Text>
+          <Text style={styles.avatarText}>{initial}</Text>
         </View>
-        <Text style={styles.name}>Usuario</Text>
-        <Text style={styles.mail}></Text>
+
+        <Text style={styles.name}>{userName}</Text>
+        <Text style={styles.mail}>{userEmail}</Text>
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Preferencias</Text>
@@ -35,6 +82,10 @@ export default function ProfileScreen() {
             Esta base ya está lista para seguir conectando Firebase, autenticación real y almacenamiento de prendas.
           </Text>
         </View>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+        </TouchableOpacity>
       </ScrollView>
     </ScreenContainer>
   );
@@ -95,5 +146,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 6,
     lineHeight: 20,
+  },
+  logoutButton: {
+    width: '100%',
+    backgroundColor: '#E74C3C',
+    paddingVertical: 14,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });

@@ -1,15 +1,47 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 import ScreenContainer from '../../components/ScreenContainer';
 import AppTextInput from '../../components/AppTextInput';
 import PrimaryButton from '../../components/PrimaryButton';
 import { COLORS } from '../../constants/theme';
-
 import { auth } from '../../services/firebaseConfig';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Error', 'Completa todos los campos');
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      // No navegues manualmente.
+      // AppNavigator detecta la sesión y entra solo.
+    } catch (error) {
+      console.log('LOGIN ERROR:', error);
+
+      let message = 'No se pudo iniciar sesión';
+
+      if (error.code === 'auth/invalid-email') {
+        message = 'El correo no es válido';
+      } else if (
+        error.code === 'auth/invalid-credential' ||
+        error.code === 'auth/user-not-found' ||
+        error.code === 'auth/wrong-password'
+      ) {
+        message = 'Correo o contraseña incorrectos';
+      } else if (error.code === 'auth/too-many-requests') {
+        message = 'Demasiados intentos. Intenta más tarde';
+      }
+
+      Alert.alert('Error', message);
+    }
+  };
 
   return (
     <ScreenContainer>
@@ -31,6 +63,7 @@ export default function LoginScreen({ navigation }) {
             value={email}
             onChangeText={setEmail}
           />
+
           <AppTextInput
             label="Contraseña"
             placeholder="••••••••"
@@ -41,12 +74,15 @@ export default function LoginScreen({ navigation }) {
 
           <PrimaryButton
             title="Iniciar sesión"
-            onPress={() => navigation.replace('MainTabs')}
+            onPress={handleLogin}
             style={{ marginTop: 8 }}
           />
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.footerButton}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Register')}
+          style={styles.footerButton}
+        >
           <Text style={styles.footerText}>
             ¿No tienes cuenta? <Text style={styles.link}>Regístrate</Text>
           </Text>

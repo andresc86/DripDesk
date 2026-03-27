@@ -1,15 +1,68 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+
 import ScreenContainer from '../../components/ScreenContainer';
 import AppTextInput from '../../components/AppTextInput';
 import PrimaryButton from '../../components/PrimaryButton';
 import { COLORS } from '../../constants/theme';
-import { auth } from '../../services/firebaseConfig';
+import { auth, db } from '../../services/firebaseConfig';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleRegister = async () => {
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      Alert.alert('Error', 'Completa todos los campos');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'La contraseña debe tener mínimo 6 caracteres');
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
+
+      const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: name.trim(),
+      });
+
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        name: name.trim(),
+        email: user.email,
+        createdAt: serverTimestamp(),
+      });
+
+      // No navegues manualmente.
+      // AppNavigator detecta la sesión y entra solo.
+    } catch (error) {
+      console.log('REGISTER ERROR:', error);
+
+      let message = 'No se pudo crear la cuenta';
+
+      if (error.code === 'auth/email-already-in-use') {
+        message = 'Este correo ya está registrado';
+      } else if (error.code === 'auth/invalid-email') {
+        message = 'El correo no es válido';
+      } else if (error.code === 'auth/weak-password') {
+        message = 'La contraseña es muy débil';
+      }
+
+      Alert.alert('Error', message);
+    }
+  };
 
   return (
     <ScreenContainer>
@@ -23,7 +76,13 @@ export default function RegisterScreen({ navigation }) {
         </View>
 
         <View style={styles.form}>
-          <AppTextInput label="Nombre" placeholder="Tu nombre" value={name} onChangeText={setName} />
+          <AppTextInput
+            label="Nombre"
+            placeholder="Tu nombre"
+            value={name}
+            onChangeText={setName}
+          />
+
           <AppTextInput
             label="Correo electrónico"
             placeholder="tu@email.com"
@@ -32,6 +91,7 @@ export default function RegisterScreen({ navigation }) {
             value={email}
             onChangeText={setEmail}
           />
+
           <AppTextInput
             label="Contraseña"
             placeholder="••••••••"
@@ -42,12 +102,15 @@ export default function RegisterScreen({ navigation }) {
 
           <PrimaryButton
             title="Crear cuenta"
-            onPress={() => navigation.replace('MainTabs')}
+            onPress={handleRegister}
             style={{ marginTop: 8 }}
           />
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.footerButton}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
+          style={styles.footerButton}
+        >
           <Text style={styles.footerText}>
             ¿Ya tienes cuenta? <Text style={styles.link}>Inicia sesión</Text>
           </Text>
