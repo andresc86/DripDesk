@@ -72,3 +72,16 @@
 - La prenda se guarda en Firestore
 - La prenda queda asociada al usuario autenticado
 - Se muestra mensaje de confirmación al guardar
+
+---
+
+## HU07 – Visualizar prendas
+**Como** usuario autenticado  
+**Quiero** ver las prendas registradas en mi armario  
+**Para** gestionar mi ropa dentro de la aplicación  
+
+**Criterios de aceptación:**
+- El sistema consulta las prendas desde Firestore
+- Solo se muestran las prendas del usuario autenticado
+- Las prendas se visualizan en una lista en pantalla
+- Si no hay prendas, se muestra un mensaje informativo
