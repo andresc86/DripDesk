@@ -1,0 +1,61 @@
+# Historias de Usuario
+
+## HU01 – Registro de usuario
+**Como** usuario nuevo  
+**Quiero** registrarme con correo, contraseña y nombre  
+**Para** poder acceder a la aplicación  
+
+**Criterios de aceptación:**
+- El usuario ingresa nombre, email y contraseña
+- Validación de campos obligatorios
+- Contraseña mínimo 6 caracteres
+- Se crea usuario en Firebase Authentication
+- Se guarda en Firestore (colección `users`)
+- Se muestra mensaje de éxito o error
+
+---
+
+## HU02 – Inicio de sesión
+**Como** usuario registrado  
+**Quiero** iniciar sesión  
+**Para** acceder a mi cuenta  
+
+**Criterios de aceptación:**
+- Validación de credenciales
+- Acceso a Home si es correcto
+- Mensaje de error si es incorrecto
+
+---
+
+## HU03 – Visualización de usuario en Home
+**Como** usuario autenticado  
+**Quiero** ver mi nombre  
+**Para** confirmar que estoy logueado  
+
+**Criterios de aceptación:**
+- Se obtiene usuario autenticado
+- Se consulta Firestore
+- Se muestra nombre en pantalla
+
+---
+
+## HU04 – Edición de perfil
+**Como** usuario  
+**Quiero** editar mi nombre  
+**Para** actualizar mi información  
+
+**Criterios de aceptación:**
+- Se carga información actual
+- Se permite editar nombre
+- Se actualiza en Auth y Firestore
+
+---
+
+## HU05 – Persistencia de sesión
+**Como** usuario  
+**Quiero** mantener mi sesión iniciada  
+**Para** no iniciar sesión cada vez  
+
+**Criterios de aceptación:**
+- Uso de AsyncStorage
+- Firebase mantiene sesión activa
