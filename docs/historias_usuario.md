@@ -59,3 +59,16 @@
 **Criterios de aceptación:**
 - Uso de AsyncStorage
 - Firebase mantiene sesión activa
+
+---
+
+## HU06 – Registrar prenda
+**Como** usuario autenticado  
+**Quiero** agregar una prenda a mi armario  
+**Para** organizar mi ropa dentro de la aplicación  
+
+**Criterios de aceptación:**
+- El usuario puede ingresar nombre, tipo, color y ocasión
+- La prenda se guarda en Firestore
+- La prenda queda asociada al usuario autenticado
+- Se muestra mensaje de confirmación al guardar
