@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import PrimaryButton from '../components/PrimaryButton';
 import GarmentCard from '../components/GarmentCard';
 import { COLORS } from '../constants/theme';
 import { GARMENTS } from '../data/mockData';
-
-import { auth, db } from '../services/firebaseConfig';
+import { registerForPushNotificationsAsync } from '../services/notificationService';
 
 export default function HomeScreen({ navigation }) {
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+  }, []);
+
   return (
     <ScreenContainer>
       <FlatList

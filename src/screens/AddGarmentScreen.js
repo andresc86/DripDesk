@@ -7,6 +7,7 @@ import AppTextInput from '../components/AppTextInput';
 import PrimaryButton from '../components/PrimaryButton';
 import { COLORS } from '../constants/theme';
 import { auth, db } from '../services/firebaseConfig';
+import { sendLocalNotification } from '../services/notificationService';
 
 export default function AddGarmentScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -31,14 +32,21 @@ export default function AddGarmentScreen({ navigation }) {
     try {
       setLoading(true);
 
+      const garmentName = name.trim();
+
       await addDoc(collection(db, 'garments'), {
-        name: name.trim(),
+        name: garmentName,
         type: type.trim(),
         color: color.trim(),
         occasion: occasion.trim(),
         userId: currentUser.uid,
         createdAt: serverTimestamp(),
       });
+
+      await sendLocalNotification(
+        'Prenda registrada',
+        `Tu prenda "${garmentName}" fue agregada correctamente al armario.`
+      );
 
       Alert.alert('Éxito', 'Prenda guardada correctamente');
 

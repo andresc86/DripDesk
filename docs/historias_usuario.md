@@ -85,3 +85,16 @@
 - Solo se muestran las prendas del usuario autenticado
 - Las prendas se visualizan en una lista en pantalla
 - Si no hay prendas, se muestra un mensaje informativo
+
+---
+
+## HU09 – Notificaciones push
+**Como** usuario  
+**Quiero** recibir notificaciones  
+**Para** estar informado sobre acciones en la app  
+
+**Criterios de aceptación:**
+- La app solicita permisos de notificación
+- Se genera un token del dispositivo
+- El usuario puede recibir notificaciones push
+- Se visualiza la notificación en el dispositivo
