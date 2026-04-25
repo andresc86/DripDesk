@@ -75,7 +75,6 @@ Incluye:
 - Manual técnico
 - Manual de usuario
 - Historias de usuario
-- Pruebas
 - Capturas de funcionamiento
 
 ---
