@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-
 import ScreenContainer from '../components/ScreenContainer';
 import AppTextInput from '../components/AppTextInput';
 import PrimaryButton from '../components/PrimaryButton';
 import { COLORS } from '../constants/theme';
-import { auth, db } from '../services/firebaseConfig';
+import { auth } from '../services/firebaseConfig';
 import { sendLocalNotification } from '../services/notificationService';
+import { insertGarment } from '../services/sqliteService';
 
 export default function AddGarmentScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -15,6 +14,9 @@ export default function AddGarmentScreen({ navigation }) {
   const [color, setColor] = useState('');
   const [occasion, setOccasion] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // 🔥 IMPORTANTE: revisa tu IP
+  const API_URL = 'http://192.168.1.73:3000/garments';
 
   const handleSaveGarment = async () => {
     if (!name.trim() || !type.trim() || !color.trim() || !occasion.trim()) {
@@ -32,20 +34,34 @@ export default function AddGarmentScreen({ navigation }) {
     try {
       setLoading(true);
 
-      const garmentName = name.trim();
-
-      await addDoc(collection(db, 'garments'), {
-        name: garmentName,
+      const garmentData = {
+        name: name.trim(),
         type: type.trim(),
         color: color.trim(),
         occasion: occasion.trim(),
         userId: currentUser.uid,
-        createdAt: serverTimestamp(),
+      };
+
+      // 🔥 1. Guardar en backend
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(garmentData),
       });
 
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error en el servidor');
+      }
+
+      // 🔥 2. Guardar en SQLite (local)
+      insertGarment(garmentData);
+
+      // 🔔 3. Notificación
       await sendLocalNotification(
         'Prenda registrada',
-        `Tu prenda "${garmentName}" fue agregada correctamente al armario.`
+        `Tu prenda "${garmentData.name}" fue agregada correctamente.`
       );
 
       Alert.alert('Éxito', 'Prenda guardada correctamente');
@@ -57,7 +73,7 @@ export default function AddGarmentScreen({ navigation }) {
 
       navigation.goBack();
     } catch (error) {
-      console.log('ADD GARMENT ERROR:', error);
+      console.log('API ERROR:', error);
       Alert.alert('Error', 'No se pudo guardar la prenda');
     } finally {
       setLoading(false);

@@ -98,3 +98,15 @@
 - Se genera un token del dispositivo
 - El usuario puede recibir notificaciones push
 - Se visualiza la notificación en el dispositivo
+
+---
+
+## HU10 – Servicio web
+Como usuario  
+Quiero que la app use un servicio web  
+Para gestionar la lógica fuera del cliente  
+
+## HU11 – Persistencia local
+Como usuario  
+Quiero que mis datos se guarden localmente  
+Para acceder a ellos sin conexión  

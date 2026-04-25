@@ -1,22 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import PrimaryButton from '../components/PrimaryButton';
 import GarmentCard from '../components/GarmentCard';
 import { COLORS } from '../constants/theme';
-import { GARMENTS } from '../data/mockData';
 import { registerForPushNotificationsAsync } from '../services/notificationService';
+import { initDB, getGarments } from '../services/sqliteService';
+import { auth } from '../services/firebaseConfig';
 
 export default function HomeScreen({ navigation }) {
+  const [localGarments, setLocalGarments] = useState([]);
+
   useEffect(() => {
     registerForPushNotificationsAsync();
+    initDB();
+
+    const loadLocal = async () => {
+      const user = auth.currentUser;
+
+      if (user) {
+        const data = await getGarments(user.uid);
+        console.log('🗄️ SQLite DATA:', data);
+        setLocalGarments(data);
+      }
+    };
+
+    setTimeout(loadLocal, 500);
   }, []);
 
   return (
     <ScreenContainer>
       <FlatList
-        data={GARMENTS.slice(0, 4)}
-        keyExtractor={(item) => item.id}
+        data={localGarments.slice(0, 4)} // 🔥 ahora usa SQLite
+        keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
@@ -40,9 +56,14 @@ export default function HomeScreen({ navigation }) {
         }
         renderItem={({ item }) => (
           <View style={styles.cardWrapper}>
-            <GarmentCard item={item} subtitle={item.category} />
+            <GarmentCard item={item} subtitle={item.type} />
           </View>
         )}
+        ListEmptyComponent={
+          <Text style={styles.empty}>
+            Aún no tienes prendas guardadas
+          </Text>
+        }
       />
     </ScreenContainer>
   );
@@ -83,5 +104,10 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 18,
     marginRight: 2,
+  },
+  empty: {
+    color: '#999',
+    marginTop: 20,
+    textAlign: 'center',
   },
 });

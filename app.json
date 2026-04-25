@@ -13,6 +13,15 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFF7FA"
+      },
+      "package": "com.andresc86.closetvirtualapp"
+    },
+    "plugins": [
+      "expo-sqlite"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1c5887d3-08b8-4d5d-8f2a-a7620cfffd0e"
       }
     }
   }
