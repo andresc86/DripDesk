@@ -60,7 +60,7 @@ SQLite (en el dispositivo)
 
 Puedes descargar la aplicación desde el siguiente enlace:
 
-👉 https://expo.dev/accounts/andresc86/projects/closet-virtual-app/builds/7fa0f7d7-8747-404b-b2e7-a021c64d19c3
+👉 https://expo.dev/accounts/andresc86/projects/closet-virtual-app/builds/16d71488-94e1-43ea-bb63-a0380c1820f1
 
 
 ---
